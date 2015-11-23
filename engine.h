@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 #include "camera.h"
 #include <memory>
+#include <unordered_map>
 
 
 class engine {
@@ -27,7 +28,7 @@ class engine {
 
     std::unique_ptr<camera> camera_;
 
-    bool keystate_[512];
+    std::unordered_map<int, bool> keystate_;
 public:
 
     engine();

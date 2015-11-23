@@ -33,7 +33,7 @@ void engine::run() {
 
         SDL_GL_SwapWindow(window);
 
-
+        SDL_Delay(7);
     }
 }
 
@@ -76,7 +76,7 @@ void engine::initScreen() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
-engine::engine() : camera_(new camera(0, 0, 0)), keystate_{0} {
+engine::engine() : camera_(new camera(0, 0, 0)), keystate_() {
     if (singleInstance)
         throw "cannot run multiple instances";
     singleInstance = true;
@@ -105,9 +105,13 @@ void engine::draw() {
     glBegin(GL_QUADS);
     glColor3d(1, 0, 0);
 
+    glColor3d(0, 0, 0);
     glVertex3d(-0.25, -0.25, -1);
+    glColor3d(1, 0, 0);
     glVertex3d(-0.25, 0.25, -1);
+    glColor3d(0, 1, 0);
     glVertex3d(0.25, 0.25, -1);
+    glColor3d(0, 0, 1);
     glVertex3d(0.25, -0.25, -1);
 
     glEnd();
