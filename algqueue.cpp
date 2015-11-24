@@ -5,14 +5,10 @@
 #include <utility>
 #include "algqueue.h"
 
-constexpr action::action(action::TYPE type, point point) noexcept : type_(type), point_(std::move(point)) {
-
+algqueue &algqueue::singleton() {
+    if (!singleton_)
+        singleton_ = std::unique_ptr<algqueue>(new algqueue());
+    return *singleton_.get();
 }
 
-constexpr action::TYPE action::getType() const noexcept {
-    return type_;
-}
-
-constexpr const point &action::getPoint() const noexcept {
-    return point_;
-}
+std::unique_ptr<algqueue> algqueue::singleton_ = nullptr;

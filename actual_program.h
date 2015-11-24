@@ -5,13 +5,9 @@
 #ifndef GEOMCOMP_ACTUAL_PROGRAM_H
 #define GEOMCOMP_ACTUAL_PROGRAM_H
 
-
-#include <vector>
-#include "point.h"
-
 class actual_program {
 public:
-    std::vector<point> punctePatrulater;
+    actual_program();
 };
 
 

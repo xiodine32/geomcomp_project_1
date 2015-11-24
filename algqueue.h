@@ -7,20 +7,26 @@
 
 #include "point.h"
 #include <queue>
+#include <memory>
 
 class action {
+public:
     enum TYPE {
         ADD_POINT
     };
 
+private:
+
     TYPE type_;
     point point_;
+
 public:
-    constexpr action(TYPE type, point point) noexcept;
 
-    constexpr TYPE getType() const noexcept;
+    constexpr action(action::TYPE type, point point) noexcept : type_(type), point_(std::move(point)) { }
 
-    constexpr const point &getPoint() const noexcept;
+    constexpr action::TYPE getType() const noexcept { return type_; }
+
+    constexpr const point &getPoint() const noexcept { return point_; }
 
     // default constructors
     constexpr action(const action &action) noexcept = default;
@@ -34,8 +40,11 @@ public:
 
 };
 
-class algqueue {
 
+class algqueue : public std::queue<action> {
+    static std::unique_ptr<algqueue> singleton_;
+public:
+    static algqueue &singleton();
 };
 
 

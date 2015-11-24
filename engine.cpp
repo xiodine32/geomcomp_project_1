@@ -111,17 +111,17 @@ void engine::events() {
 
 void engine::draw() {
     glBegin(GL_QUADS);
-    glColor3d(1, 0, 0);
-
-    glColor3d(0, 0, 0);
-    glVertex3d(-0.25, -0.25, -1);
-    glColor3d(1, 0, 0);
-    glVertex3d(-0.25, 0.25, -1);
-    glColor3d(0, 1, 0);
-    glVertex3d(0.25, 0.25, -1);
-    glColor3d(0, 0, 1);
-    glVertex3d(0.25, -0.25, -1);
-
+    for (double i = -5; i < 5; i += 0.5)
+        for (double j = -5; j < 5; j += 0.5) {
+            glColor3d(0, 0, 0);
+            glVertex3d(i + -0.25, j - 0.25, -1);
+            glColor3d(1, 0, 0);
+            glVertex3d(i + -0.25, j + 0.25, -1);
+            glColor3d(0, 1, 0);
+            glVertex3d(i + 0.25, j + 0.25, -1);
+            glColor3d(0, 0, 1);
+            glVertex3d(i + 0.25, j - 0.25, -1);
+        }
     glEnd();
 }
 
