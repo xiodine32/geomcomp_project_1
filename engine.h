@@ -13,11 +13,6 @@
 
 class engine {
 
-    static const int WIDTH = 800;
-    static const int HEIGHT = 600;
-    static const int FPS = 1000 / 60;
-    static constexpr double MOUSE_SMOOTHING = 100.0;
-    static constexpr double KEY_SMOOTHING = 100.0;
 
     void initOpenGL();
 
@@ -29,14 +24,15 @@ class engine {
     std::unique_ptr<camera> camera_;
 
     std::unordered_map<int, bool> keystate_;
+
 public:
+
 
     engine();
 
     ~engine();
 
     void run();
-
 
     static bool running;
 
@@ -45,6 +41,12 @@ public:
     void draw();
 
     void tick();
+
+    static const int WIDTH = 800;
+    static const int HEIGHT = 600;
+    static const int FPS = 1000 / 60;
+    static constexpr double MOUSE_SMOOTHING = 100.0;
+    static constexpr double KEY_SMOOTHING = 100.0;
 };
 
 

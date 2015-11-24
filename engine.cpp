@@ -118,32 +118,5 @@ void engine::draw() {
 }
 
 void engine::tick() {
-    static double PI = 3.14159265;
-    static double DEG2RAD = PI / 180.0;
-    double xDelta = 0, yDelta = 0, zDelta = 0;
-    if (keystate_[SDLK_w]) {
-        xDelta += sin(camera_->getPitch() * DEG2RAD);
-        zDelta -= cos(camera_->getPitch() * DEG2RAD);
-    }
-
-    if (keystate_[SDLK_s]) {
-        xDelta -= sin(camera_->getPitch() * DEG2RAD);
-        zDelta += cos(camera_->getPitch() * DEG2RAD);
-
-    }
-    if (keystate_[SDLK_a]) {
-        xDelta += sin(camera_->getPitch() * DEG2RAD - PI / 2.0);
-        zDelta -= cos(camera_->getPitch() * DEG2RAD - PI / 2.0);
-    }
-    if (keystate_[SDLK_d]) {
-        xDelta -= sin(camera_->getPitch() * DEG2RAD - PI / 2.0);
-        zDelta += cos(camera_->getPitch() * DEG2RAD - PI / 2.0);
-    }
-    if (keystate_[SDLK_q])
-        yDelta++;
-    if (keystate_[SDLK_e])
-        yDelta--;
-
-    camera_->deltaPosition(xDelta / KEY_SMOOTHING, yDelta / KEY_SMOOTHING, zDelta / KEY_SMOOTHING);
-
+    camera_->tick(keystate_);
 }

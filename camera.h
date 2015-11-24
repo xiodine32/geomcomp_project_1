@@ -5,6 +5,7 @@
 #ifndef GEOMCOMP_CAMERA_H
 #define GEOMCOMP_CAMERA_H
 
+#include <unordered_map>
 
 class camera {
     double x_;
@@ -18,14 +19,12 @@ public:
 
     void push();
 
+    void tick(std::unordered_map<int, bool> &keystate_);
     void pop();
 
     void deltaPosition(double x = 0, double y = 0, double z = 0);
 
     void deltaView(double pitch = 0, double yaw = 0);
-
-
-    double getPitch() const;
 
 };
 
