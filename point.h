@@ -17,13 +17,27 @@ public:
         VIEWPOINT,
         TRIANGULATION
     };
-
+    enum INDEX {
+        X, Y, Z
+    };
+    
     constexpr point(double x, double y, double z) noexcept;
     constexpr point(double x, double y, POINT_TYPE type = POINT_TYPE::POLYGON) noexcept;
 
-    constexpr double getX() const noexcept;
-    constexpr double getY() const noexcept;
-    constexpr double getZ() const noexcept;
+    constexpr double operator[](int index) const noexcept;
+
+
+    // default constructors
+    constexpr point(const point &point) noexcept = default;
+
+    constexpr point(point &&point) noexcept = default;
+
+    // default operators
+    point &operator=(const point &point) noexcept = default;
+
+    point &operator=(point &&point) noexcept = default;
+
+
 };
 
 
