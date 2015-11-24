@@ -52,6 +52,7 @@ void engine::initOpenGL() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
+
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 
@@ -61,9 +62,11 @@ void engine::initOpenGL() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, WIDTH, HEIGHT);
-    gluPerspective(45.0, (double) WIDTH / HEIGHT, 0.1, 10);
+    gluPerspective(45.0, (double) WIDTH / HEIGHT, 0.1, 100);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glLineWidth(3);
 }
 
 void engine::initScreen() {
@@ -82,7 +85,7 @@ void engine::initScreen() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
-engine::engine() : camera_(new camera(0, 0, 0)), keystate_() {
+engine::engine() : camera_(new camera(0, 0, 10)), keystate_() {
     if (singleInstance)
         throw "cannot run multiple instances";
     singleInstance = true;
@@ -110,21 +113,67 @@ void engine::events() {
 }
 
 void engine::draw() {
-    glBegin(GL_QUADS);
-    for (double i = -5; i < 5; i += 0.5)
-        for (double j = -5; j < 5; j += 0.5) {
-            glColor3d(0, 0, 0);
-            glVertex3d(i + -0.25, j - 0.25, -1);
-            glColor3d(1, 0, 0);
-            glVertex3d(i + -0.25, j + 0.25, -1);
-            glColor3d(0, 1, 0);
-            glVertex3d(i + 0.25, j + 0.25, -1);
-            glColor3d(0, 0, 1);
-            glVertex3d(i + 0.25, j - 0.25, -1);
+    static GLuint displayList = 0;
+    if (displayList == 0) {
+        displayList = glGenLists(1);
+        glNewList(displayList, GL_COMPILE);
+        glBegin(GL_QUADS);
+        int index = 0;
+        for (double i = -50; i < 50; i += 0.5) {
+            index = (index + 1) % 2;
+            for (double j = -50; j < 50; j += 0.5) {
+                index = (index + 1) % 2;
+                glColor3d(index, 0, index);
+                glVertex3d(i + -0.25, j - 0.25, -10);
+                glVertex3d(i + -0.25, j + 0.25, -10);
+                glVertex3d(i + 0.25, j + 0.25, -10);
+                glVertex3d(i + 0.25, j - 0.25, -10);
+            }
         }
+        glEnd();
+        glEndList();
+    }
+    glCallList(displayList);
+
+    glColor3d(0, 0, 0);
+    glBegin(GL_TRIANGLE_FAN);
+    static double colors[2][3] = {
+            {0.3, 0.3, 0.3},
+            {0.6, 0.6, 0.6},
+    };
+    int index = 0;
+    for (const auto &elem : actions) {
+        if (elem.getType() != action::ADD_POINT)
+            continue;
+        const auto &point = elem.getPoint();
+        index = (index + 1) % 2;
+        glColor3d(colors[index][0],
+                  colors[index][1],
+                  colors[index][2]);
+        glVertex3d(point[point::X] + requestRandom(),
+                   point[point::Y] + requestRandom(),
+                   point[point::Z] + requestRandom());
+    }
     glEnd();
 }
 
 void engine::tick() {
     camera_->tick(keystate_);
+    engineTicks_++;
+    if (engineTicks_ >= ENGINE_TICKS_ADD) {
+        engineTicks_ = 0;
+        tickAdd();
+    }
 }
+
+void engine::tickAdd() {
+    if (algqueue::singleton().empty())
+        return;
+    actions.push_back(algqueue::singleton().front());
+    algqueue::singleton().pop();
+}
+
+double engine::requestRandom() {
+    return (rand() / (double) RAND_MAX - 0.5) / 50.0;
+}
+

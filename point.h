@@ -28,10 +28,11 @@ public:
                                                type == POINT_TYPE::TRIANGULATION ? 2 : 3)
     ) { }
 
-    constexpr double operator[](int index) const noexcept {
+    constexpr const double &operator[](int index) const noexcept {
         return index == 0 ? x_ : (index == 1 ? y_ : z_);
     }
 
+    double &operator[](int index) noexcept;
 
     // default constructors
     constexpr point(const point &point) noexcept = default;

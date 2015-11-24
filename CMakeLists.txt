@@ -3,7 +3,7 @@ project(geomcomp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lSDLmain -lSDL2 -lGL -lGLU")
 
-set(SOURCE_FILES main.cpp engine.cpp engine.h camera.cpp camera.h actual_program.cpp actual_program.h point.h algqueue.cpp algqueue.h triangle.cpp triangle.h)
+set(SOURCE_FILES main.cpp engine.cpp engine.h camera.cpp camera.h actual_program.cpp actual_program.h point.h algqueue.cpp algqueue.h triangle.cpp triangle.h point.cpp)
 add_executable(geomcomp ${SOURCE_FILES})
 
 configure_file(input.txt input.txt COPYONLY)
