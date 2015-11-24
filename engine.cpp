@@ -33,7 +33,7 @@ void engine::run() {
 
         SDL_GL_SwapWindow(window);
 
-        SDL_Delay(7);
+        SDL_Delay(FPS / 2);
     }
 }
 
@@ -69,8 +69,13 @@ void engine::initOpenGL() {
 void engine::initScreen() {
     SDL_Init(SDL_INIT_VIDEO);
 
+    SDL_Rect r;
+    if (!SDL_GetDisplayBounds(0, &r)) {
+        WIDTH = r.w;
+        HEIGHT = r.h;
+    }
     SDL_Renderer *displayRenderer;
-    SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, SDL_WINDOW_OPENGL, &window, &displayRenderer);
+    SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN, &window, &displayRenderer);
     SDL_SetWindowTitle(window, "Neagu Rares, Bucur Radu, Vlad Bulete - Proiect 9");
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -84,6 +89,8 @@ engine::engine() : camera_(new camera(0, 0, 0)), keystate_() {
 
 bool engine::singleInstance = false;
 bool engine::running = false;
+int engine::WIDTH = 800;
+int engine::HEIGHT = 600;
 
 void engine::events() {
     SDL_Event event;

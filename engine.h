@@ -42,8 +42,8 @@ public:
 
     void tick();
 
-    static const int WIDTH = 800;
-    static const int HEIGHT = 600;
+    static int WIDTH;
+    static int HEIGHT;
     static const int FPS = 1000 / 60;
     static constexpr double MOUSE_SMOOTHING = 100.0;
     static constexpr double KEY_SMOOTHING = 100.0;
