@@ -74,6 +74,7 @@ void engine::initScreen() {
         WIDTH = r.w;
         HEIGHT = r.h;
     }
+
     SDL_Renderer *displayRenderer;
     SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN, &window, &displayRenderer);
     SDL_SetWindowTitle(window, "Neagu Rares, Bucur Radu, Vlad Bulete - Proiect 9");
