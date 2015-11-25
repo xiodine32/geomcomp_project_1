@@ -23,7 +23,7 @@ public:
     constexpr point(double x, double y, double z) noexcept : x_(x), y_(y), z_(z) { }
 
     constexpr point(double x, double y, POINT_TYPE type = POINT_TYPE::POLYGON) noexcept : x_(x), y_(y), z_(
-            type == POINT_TYPE::POLYGON ? 0 : (type == POINT_TYPE::VIEWPOINT ? 1 : 2)
+            type == POINT_TYPE::POLYGON ? 0 : (type == POINT_TYPE::VIEWPOINT ? 0.01 : 0.02)
     ) { }
 
     constexpr const double &operator[](int index) const noexcept {
@@ -42,6 +42,7 @@ public:
 
     point &operator=(point &&point) noexcept = default;
 
+    void glTranslate() const noexcept;
 
 };
 

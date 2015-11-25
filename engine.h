@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 #include "camera.h"
 #include "algqueue.h"
+#include "font.h"
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -30,9 +31,11 @@ class engine {
     std::vector<action> actions;
 
     int engineTicks_;
-    int inside_;
+    double inside_;
 
     void tickAdd();
+
+    font font_;
 
 public:
 

@@ -5,6 +5,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <GL/glu.h>
 #include "engine.h"
+#include "circle.h"
 
 
 void engine::run() {
@@ -55,7 +56,7 @@ void engine::initOpenGL() {
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-
+    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glMatrixMode(GL_PROJECTION);
@@ -65,8 +66,8 @@ void engine::initOpenGL() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glLineWidth(3);
     glPointSize(10);
+    glEnable(GL_TEXTURE_2D);
 }
 
 void engine::initScreen() {
@@ -78,7 +79,7 @@ void engine::initScreen() {
         HEIGHT = r.h;
     }
 
-    window = SDL_CreateWindow("Neagu Rares, Bucur Radu, Vlad Bulete - Proiect 4",
+    window = SDL_CreateWindow("Neagu Rares, Bucur Radu, Vlad Bulete - Proiect 3",
                               SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                               WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
     SDL_GL_CreateContext(window);
@@ -86,7 +87,7 @@ void engine::initScreen() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
-engine::engine() : camera_(new camera(0, 0, 10)), keystate_(), inside_(-2) {
+engine::engine() : camera_(new camera(0.5, 2, 10, 0, 15)), keystate_(), inside_(-2), font_(), engineTicks_(0) {
     if (singleInstance)
         throw "cannot run multiple instances";
     singleInstance = true;
@@ -114,16 +115,63 @@ void engine::events() {
 }
 
 void engine::draw() {
+    static GLuint displayList = 0;
+    glColor4f(1, 1, 1, 1);
+    if (displayList == 0) {
+        displayList = glGenLists(1);
+        glNewList(displayList, GL_COMPILE);
+        glLineWidth(5);
+        glBegin(GL_LINES);
+        glColor3d(0.001, 0.001, 1);
+        glVertex3d(0.001, 0.001, -1000);
+        glVertex3d(0.001, 0.001, 1000);
+        glColor3d(1, 0.001, 0.001);
+        glVertex3d(-1000, 0.001, 0.001);
+        glVertex3d(1000, 0.001, 0.001);
+        glColor3d(0.001, 1, 0.001);
+        glVertex3d(0.001, -1000, 0.001);
+        glVertex3d(0.001, 1000, 0.001);
+        glEnd();
 
+
+        glLineWidth(0.1);
+        glColor3d(0.8, 0.8, 0.8);
+        glBegin(GL_LINES);
+        for (int i = -1000; i < 1000; i++) {
+            if (i == 0)
+                continue;
+
+            glVertex3d(i + 0.0015, -1000, 0.0015);
+            glVertex3d(i + 0.0015, 1000, 0.0015);
+
+            glVertex3d(-1000, i + 0.0015, 0.0015);
+            glVertex3d(1000, i + 0.0015, 0.0015);
+
+        }
+        glEnd();
+        glColor4f(1, 1, 1, 0.5);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        for (int i = -10; i <= 10; i++) {
+            if (i == 0)
+                continue;
+            font_.print(std::to_string(i).c_str(), 0.003, i + 0.003, 0.003);
+            font_.print(std::to_string(i).c_str(), i + 0.003, 0.003, 0.003);
+        }
+
+        font_.print("0", 0, 0, 0.001);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glEndList();
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBegin(GL_TRIANGLE_FAN);
     if (inside_ == -2)
         glColor3d(0.3, 0.3, 0.3);
     else if (inside_ == -1)
-        glColor3d(1, 0, 0);
+        glColor3d(0.7, 0, 0);
     else if (inside_ == 0)
-        glColor3d(0, 0, 1);
+        glColor3d(0, 0, 0.7);
     else
-        glColor3d(0, 1, 0);
+        glColor3d(0, 0.7, 0);
     int index = 0;
     for (const auto &elem : actions) {
         if (elem.getType() != action::ADD_POINT)
@@ -138,7 +186,6 @@ void engine::draw() {
     }
     glEnd();
 
-    glBegin(GL_POINTS);
     for (const auto &elem : actions) {
         if (elem.getType() != action::ADD_POINT)
             continue;
@@ -148,9 +195,29 @@ void engine::draw() {
             glColor3d(0, 0, 0);
         else
             glColor3d(1, 0, 0);
-        glVertex3d(point[point::X], point[point::Y], point[point::Z]);
+        auto newpoint = point;
+        newpoint[point::Z] += 0.003;
+        circle(newpoint, 0.1).gl(font_);
+        newpoint[point::Z] -= 0.003 * 2;
+        circle(newpoint, 0.1).gl(font_);
+
     }
-    glEnd();
+    glCallList(displayList);
+    glColor4f(1, 1, 1, 1);
+    index = 0;
+    for (const auto &elem : actions) {
+        index++;
+        if (elem.getType() != action::ADD_POINT)
+            continue;
+
+        const auto &point = elem.getPoint();
+        font_.print(std::to_string(index) + " (" + std::to_string(point[0]) + " " +
+                    std::to_string(point[1]) + ")",
+                    point[0] - 0.5,
+                    point[1] + 0.1,
+                    point[2] + 0.01, 0.1);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 
 
 }
@@ -171,7 +238,6 @@ void engine::tickAdd() {
     const auto &x = algqueue::singleton().front();
     if (x.getType() == action::ADD_RESULT) {
         inside_ = x.getPoint()[point::X];
-        SDL_Log("inside: %.2f", inside_);
     }
     actions.push_back(x);
     algqueue::singleton().pop();

@@ -33,8 +33,7 @@ actual_program::actual_program() {
 }
 
 int actual_program::sign_det(point a, point b, point c) {
-    double det = a[0] * b[1] + b[0] * c[1] + a[1] * c[0];
-    det -= a[1] * b[0] - c[0] * b[1] - c[1] * a[0];
+    double det = a[0] * b[1] - a[0] * c[1] - a[1] * b[0] + a[1] * c[0] + b[0] * c[1] - b[1] * c[0];
 
     if (det < 0)
         return -1;
@@ -67,7 +66,7 @@ void actual_program::isInsideCalc() {
         else
             negative_count++;
     }
-    if (zero_count != 0 && ((positive_count == 0) || (negative_count == 0))) {
+    if (zero_count != 0 && (positive_count == 0 || negative_count == 0)) {
         isInsideVal = 0;
     }
     else if (zero_count == 0 && (positive_count == 0 || negative_count == 0)) {
