@@ -9,7 +9,6 @@
 using namespace std;
 
 actual_program::actual_program() {
-    std::vector<point> puncte;
 
     ifstream input("input.txt");
 
@@ -23,4 +22,13 @@ actual_program::actual_program() {
         algqueue::singleton().push(action(action::ADD_POINT, punct));
         puncte.push_back(std::move(punct));
     }
+    double x, y;
+    input >> x >> y;
+    isInsideVal=0;
+    point punct(x, y, point::POINT_TYPE::VIEWPOINT);
+    algqueue::singleton().push(action(action::ADD_POINT, punct));\
+    puncte.push_back(std::move(punct));
+    isInsideCalc();
+    return;
 }
+
