@@ -78,9 +78,10 @@ void engine::initScreen() {
         HEIGHT = r.h;
     }
 
-    SDL_Renderer *displayRenderer;
-    SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN, &window, &displayRenderer);
-    SDL_SetWindowTitle(window, "Neagu Rares, Bucur Radu, Vlad Bulete - Proiect 9");
+    window = SDL_CreateWindow("Neagu Rares, Bucur Radu, Vlad Bulete - Proiect 4",
+                              SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                              WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
+    SDL_GL_CreateContext(window);
 
     SDL_SetRelativeMouseMode(SDL_TRUE);
 }
@@ -138,8 +139,8 @@ void engine::draw() {
     glColor3d(0, 0, 0);
     glBegin(GL_TRIANGLE_FAN);
     static double colors[2][3] = {
-            {0.3, 0.3, 0.3},
-            {0.6, 0.6, 0.6},
+            {0.8, 0.3, 0.3},
+            {0.6, 0.7, 0.6},
     };
     int index = 0;
     for (const auto &elem : actions) {
@@ -150,9 +151,9 @@ void engine::draw() {
         glColor3d(colors[index][0],
                   colors[index][1],
                   colors[index][2]);
-        glVertex3d(point[point::X] + requestRandom(),
-                   point[point::Y] + requestRandom(),
-                   point[point::Z] + requestRandom());
+        glVertex3d(point[point::X] + 0 * requestRandom(),
+                   point[point::Y] + 0 * requestRandom(),
+                   point[point::Z] + 0 * requestRandom());
     }
     glEnd();
 }
