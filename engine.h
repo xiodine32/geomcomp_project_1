@@ -30,6 +30,7 @@ class engine {
     std::vector<action> actions;
 
     int engineTicks_;
+    int inside_;
 
     void tickAdd();
 
@@ -56,8 +57,6 @@ public:
     static const int ENGINE_TICKS_ADD = 30;
     static constexpr double MOUSE_SMOOTHING = 100.0;
     static constexpr double KEY_SMOOTHING = 10.0;
-
-    double requestRandom();
 };
 
 

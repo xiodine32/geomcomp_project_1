@@ -20,9 +20,6 @@ class actual_program {
 
 public:
     actual_program();
-
-    int isInside();
-
 };
 
 

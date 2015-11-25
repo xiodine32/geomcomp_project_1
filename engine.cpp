@@ -56,7 +56,6 @@ void engine::initOpenGL() {
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 
-    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glMatrixMode(GL_PROJECTION);
@@ -67,6 +66,7 @@ void engine::initOpenGL() {
     glLoadIdentity();
 
     glLineWidth(3);
+    glPointSize(10);
 }
 
 void engine::initScreen() {
@@ -86,7 +86,7 @@ void engine::initScreen() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
-engine::engine() : camera_(new camera(0, 0, 10)), keystate_() {
+engine::engine() : camera_(new camera(0, 0, 10)), keystate_(), inside_(-2) {
     if (singleInstance)
         throw "cannot run multiple instances";
     singleInstance = true;
@@ -114,48 +114,42 @@ void engine::events() {
 }
 
 void engine::draw() {
-    static GLuint displayList = 0;
-    if (displayList == 0) {
-        displayList = glGenLists(1);
-        glNewList(displayList, GL_COMPILE);
-        glBegin(GL_QUADS);
-        int index = 0;
-        for (double i = -50; i < 50; i += 0.5) {
-            index = (index + 1) % 2;
-            for (double j = -50; j < 50; j += 0.5) {
-                index = (index + 1) % 2;
-                glColor3d(index, 0, index);
-                glVertex3d(i + -0.25, j - 0.25, -10);
-                glVertex3d(i + -0.25, j + 0.25, -10);
-                glVertex3d(i + 0.25, j + 0.25, -10);
-                glVertex3d(i + 0.25, j - 0.25, -10);
-            }
-        }
-        glEnd();
-        glEndList();
-    }
-    glCallList(displayList);
 
-    glColor3d(0, 0, 0);
     glBegin(GL_TRIANGLE_FAN);
-    static double colors[2][3] = {
-            {0.8, 0.3, 0.3},
-            {0.6, 0.7, 0.6},
-    };
+    if (inside_ == -2)
+        glColor3d(0.3, 0.3, 0.3);
+    else if (inside_ == -1)
+        glColor3d(0, 0, 1);
+    else if (inside_ == 0)
+        glColor3d(1, 0, 0);
+    else
+        glColor3d(0, 1, 0);
     int index = 0;
     for (const auto &elem : actions) {
         if (elem.getType() != action::ADD_POINT)
             continue;
+        if (elem.getPoint()[point::Z] != 0)
+            continue;
         const auto &point = elem.getPoint();
         index = (index + 1) % 2;
-        glColor3d(colors[index][0],
-                  colors[index][1],
-                  colors[index][2]);
-        glVertex3d(point[point::X] + 0 * requestRandom(),
-                   point[point::Y] + 0 * requestRandom(),
-                   point[point::Z] + 0 * requestRandom());
+        glVertex3d(point[point::X],
+                   point[point::Y],
+                   point[point::Z]);
     }
     glEnd();
+
+    glBegin(GL_POINTS);
+    glColor3d(0, 0, 0);
+    for (const auto &elem : actions) {
+        if (elem.getType() != action::ADD_POINT || elem.getPoint()[point::Z] != 1)
+            continue;
+
+        const auto &point = elem.getPoint();
+        glVertex3d(point[point::X], point[point::Y], point[point::Z]);
+    }
+    glEnd();
+
+
 }
 
 void engine::tick() {
@@ -170,11 +164,10 @@ void engine::tick() {
 void engine::tickAdd() {
     if (algqueue::singleton().empty())
         return;
-    actions.push_back(algqueue::singleton().front());
+
+    const auto &x = algqueue::singleton().front();
+    if (x.getType() == action::ADD_RESULT)
+        inside_ = (int) x.getPoint()[point::X];
+    actions.push_back(x);
     algqueue::singleton().pop();
 }
-
-double engine::requestRandom() {
-    return (rand() / (double) RAND_MAX - 0.5) / 50.0;
-}
-
