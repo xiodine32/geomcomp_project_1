@@ -119,9 +119,9 @@ void engine::draw() {
     if (inside_ == -2)
         glColor3d(0.3, 0.3, 0.3);
     else if (inside_ == -1)
-        glColor3d(0, 0, 1);
-    else if (inside_ == 0)
         glColor3d(1, 0, 0);
+    else if (inside_ == 0)
+        glColor3d(0, 0, 1);
     else
         glColor3d(0, 1, 0);
     int index = 0;
@@ -139,12 +139,15 @@ void engine::draw() {
     glEnd();
 
     glBegin(GL_POINTS);
-    glColor3d(0, 0, 0);
     for (const auto &elem : actions) {
-        if (elem.getType() != action::ADD_POINT || elem.getPoint()[point::Z] != 1)
+        if (elem.getType() != action::ADD_POINT)
             continue;
 
         const auto &point = elem.getPoint();
+        if (point[point::Z] == 0)
+            glColor3d(0, 0, 0);
+        else
+            glColor3d(1, 0, 0);
         glVertex3d(point[point::X], point[point::Y], point[point::Z]);
     }
     glEnd();
@@ -166,8 +169,10 @@ void engine::tickAdd() {
         return;
 
     const auto &x = algqueue::singleton().front();
-    if (x.getType() == action::ADD_RESULT)
-        inside_ = (int) x.getPoint()[point::X];
+    if (x.getType() == action::ADD_RESULT) {
+        inside_ = x.getPoint()[point::X];
+        SDL_Log("inside: %.2f", inside_);
+    }
     actions.push_back(x);
     algqueue::singleton().pop();
 }
