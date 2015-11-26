@@ -32,6 +32,10 @@ public:
 
     double &operator[](int index) noexcept;
 
+    constexpr bool operator==(const point &point) noexcept {
+        return x_ == point.x_ && y_ == point.y_ && z_ == point.z_;
+    }
+
     // default constructors
     constexpr point(const point &point) noexcept = default;
 
