@@ -70,7 +70,10 @@ void actual_program::isInsideCalc() {
     }
 
     if (zeros != 0) {
-        isInsideVal = 0;
+        if (zeros % 2 == 0 && puncte[puncte.size() - 1] == puncte[0])
+            isInsideVal = 1;
+        else
+            isInsideVal = 0;
     } else {
         isInsideVal = -1;
     }
