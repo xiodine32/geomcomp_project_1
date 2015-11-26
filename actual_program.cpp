@@ -8,7 +8,7 @@
 
 using namespace std;
 
-actual_program::actual_program() {
+actual_program::actual_program() : tri1(0, 0, 0), tri2(0, 0, 0), tri3(0, 0, 0) {
 
     ifstream input("input.txt");
 
@@ -30,6 +30,9 @@ actual_program::actual_program() {
     puncte.push_back(std::move(punct));
     isInsideCalc();
     algqueue::singleton().push(action(action::ADD_RESULT, point(isInsideVal, 0, 0)));
+    algqueue::singleton().push(action(action::ADD_HIGHLIGHT, tri1));
+    algqueue::singleton().push(action(action::ADD_HIGHLIGHT, tri2));
+    algqueue::singleton().push(action(action::ADD_HIGHLIGHT, tri3));
 }
 
 int actual_program::sign_det(point a, point b, point c) {
@@ -45,28 +48,32 @@ int actual_program::sign_det(point a, point b, point c) {
 
 void actual_program::isInsideCalc() {
     int zeros = 0;
-    int insides = 0;
     int outsides = 0;
     for (std::size_t i = 2; i < puncte.size() - 1; i++) {
         // avem 0 ca punct fix
         // avem i - 1, i ca latura mobila
         int status = sign_tri(puncte[0], puncte[i - 1], puncte[i], puncte[puncte.size() - 1]);
-        if (status == 0)
+        if (status == 0) {
             zeros++;
-        else if (status > 0)
-            insides++;
-        else
+            tri1 = puncte[0];
+            tri2 = puncte[i - 1];
+            tri3 = puncte[i];
+        }
+        else if (status > 0) {
+            tri1 = puncte[0];
+            tri2 = puncte[i - 1];
+            tri3 = puncte[i];
+            isInsideVal = 1;
+            return;
+        } else
             outsides++;
     }
 
-    if (zeros != 0 && (insides == 0 || outsides == 0)) {
+    if (zeros != 0) {
         isInsideVal = 0;
-    }
-    else if (zeros == 0 && (insides == 0 || outsides == 0)) {
+    } else {
         isInsideVal = -1;
     }
-    else
-        isInsideVal = 1;
 }
 
 int actual_program::sign_tri(point a, point b, point c, point m) {

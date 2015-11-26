@@ -14,6 +14,8 @@ class actual_program {
 
     int isInsideVal;
 
+    point tri1, tri2, tri3;
+
     int sign_det(point a, point b, point c);
 
     void isInsideCalc();
@@ -22,6 +24,8 @@ class actual_program {
 
 public:
     actual_program();
+
+
 };
 
 

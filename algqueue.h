@@ -12,7 +12,7 @@
 class action {
 public:
     enum TYPE {
-        ADD_POINT, ADD_RESULT
+        ADD_POINT, ADD_RESULT, ADD_HIGHLIGHT
     };
 
 private:

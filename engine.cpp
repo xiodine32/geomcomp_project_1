@@ -175,17 +175,28 @@ void engine::draw() {
         glColor3d(0, 0, 0.7);
     else
         glColor3d(0, 0.7, 0);
-    int index = 0;
     for (const auto &elem : actions) {
         if (elem.getType() != action::ADD_POINT)
             continue;
         if (elem.getPoint()[point::Z] != 0)
             continue;
         const auto &point = elem.getPoint();
-        index = (index + 1) % 2;
         glVertex3d(point[point::X],
                    point[point::Y],
                    point[point::Z]);
+    }
+    glEnd();
+
+    glColor3d(1, 0, 1);
+    glLineWidth(3);
+    glBegin(GL_LINE_LOOP);
+    for (const auto &elem : actions) {
+        if (elem.getType() != action::ADD_HIGHLIGHT)
+            continue;
+        const auto &point = elem.getPoint();
+        glVertex3d(point[point::X],
+                   point[point::Y],
+                   point[point::Z] + 0.004);
     }
     glEnd();
 
@@ -205,9 +216,10 @@ void engine::draw() {
         circle(newpoint, 0.1).gl(font_);
 
     }
+
     glCallList(displayList);
     glColor4f(1, 1, 1, 1);
-    index = 0;
+    int index = 0;
     for (const auto &elem : actions) {
         index++;
         if (elem.getType() != action::ADD_POINT)
