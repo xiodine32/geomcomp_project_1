@@ -44,34 +44,63 @@ int actual_program::sign_det(point a, point b, point c) {
 }
 
 void actual_program::isInsideCalc() {
-
-    std::size_t puncte_size = puncte.size() - 1;
-
-    point view_point = puncte[puncte_size];
-
-    int zero_count = 0, negative_count = 0, positive_count = 0;
-
-    for (int i = 0; i < puncte_size - 1; i++) {
-        int aux;
-        if (i != puncte_size - 1) {
-            aux = sign_det(puncte[i], puncte[i + 1], view_point);
-        }
-        else {
-            aux = sign_det(puncte[i], puncte[0], view_point);
-        }
-        if (aux == 0)
-            zero_count++;
-        else if (aux == 1)
-            positive_count++;
+    int zeros = 0;
+    int insides = 0;
+    int outsides = 0;
+    for (std::size_t i = 2; i < puncte.size() - 1; i++) {
+        // avem 0 ca punct fix
+        // avem i - 1, i ca latura mobila
+        int status = sign_tri(puncte[0], puncte[i - 1], puncte[i], puncte[puncte.size() - 1]);
+        if (status == 0)
+            zeros++;
+        else if (status > 0)
+            insides++;
         else
-            negative_count++;
+            outsides++;
     }
-    if (zero_count != 0 && (positive_count == 0 || negative_count == 0)) {
+
+    if (zeros != 0 && (insides == 0 || outsides == 0)) {
         isInsideVal = 0;
     }
-    else if (zero_count == 0 && (positive_count == 0 || negative_count == 0)) {
-        isInsideVal = 1;
+    else if (zeros == 0 && (insides == 0 || outsides == 0)) {
+        isInsideVal = -1;
     }
     else
-        isInsideVal = -1;
-};
+        isInsideVal = 1;
+}
+
+int actual_program::sign_tri(point a, point b, point c, point m) {
+    int zeros = 0, insides = 0, outsides = 0;
+    int status = sign_det(a, b, m);
+    if (status == 0)
+        zeros++;
+    else if (status > 0)
+        insides++;
+    else
+        outsides++;
+
+    status = sign_det(b, c, m);
+    if (status == 0)
+        zeros++;
+    else if (status > 0)
+        insides++;
+    else
+        outsides++;
+
+    status = sign_det(c, a, m);
+    if (status == 0)
+        zeros++;
+    else if (status > 0)
+        insides++;
+    else
+        outsides++;
+
+    if (zeros != 0 && (insides == 0 || outsides == 0)) {
+        return 0;
+    }
+    else if (zeros == 0 && (insides == 0 || outsides == 0)) {
+        return 1;
+    }
+    else
+        return -1;
+}

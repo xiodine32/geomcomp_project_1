@@ -104,6 +104,9 @@ void engine::events() {
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
             running = false;
 
+        if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_r)
+            ENGINE_TICKS_ADD = 1;
+
         if (event.type == SDL_MOUSEMOTION)
             camera_->deltaView(event.motion.xrel / MOUSE_SMOOTHING, event.motion.yrel / MOUSE_SMOOTHING);
 
@@ -242,3 +245,5 @@ void engine::tickAdd() {
     actions.push_back(x);
     algqueue::singleton().pop();
 }
+
+int engine::ENGINE_TICKS_ADD = 60;

@@ -18,6 +18,8 @@ class actual_program {
 
     void isInsideCalc();
 
+    int sign_tri(point a, point b, point c, point m);
+
 public:
     actual_program();
 };
